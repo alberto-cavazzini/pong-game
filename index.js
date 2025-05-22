@@ -329,8 +329,7 @@ function drawParticle(particle) {
 }
 
 function updateParticles() {
-    // MODIFICA QUI: Pulisce completamente il canvas di sfondo ad ogni frame.
-    // Questo elimina l'effetto "striscia" delle particelle.
+    // Pulisce completamente il canvas di sfondo ad ogni frame per eliminare l'effetto "striscia" delle particelle.
     bodyBgCtx.clearRect(0, 0, bodyBackgroundCanvas.width, bodyBackgroundCanvas.height);
 
     for (let i = 0; i < numParticles; i++) {
