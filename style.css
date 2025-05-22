@@ -6,7 +6,7 @@ body {
     min-height: 100vh;       /* Occupa l'intera altezza della viewport */
     margin: 0;
     padding: 0;              
-    background: linear-gradient(to right, #2c3e50, #34495e); /* Sfumatura scura, ora sarà dietro la nuova canvas */
+    background: linear-gradient(to right, rgb(0, 0, 0), #111); /* Sfumatura scura, ora sarà dietro la nuova canvas */
     overflow: hidden;        
     box-sizing: border-box;  
     position: relative; /* Importante per posizionare la canvas di sfondo */

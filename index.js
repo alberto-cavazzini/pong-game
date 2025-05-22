@@ -59,7 +59,7 @@ const numParticles = 50; // Aumentato il numero di particelle per maggiore visib
 const particleColor = 'rgba(100, 200, 255, 0.15)'; // Opacità leggermente aumentata
 const particleSpeed = 0.08; // Velocità leggermente aumentata
 
-// Modificato: Ora usa event.code per i tasti
+// Modificato: Ora usa event.code per i tasti (soluzione al code smell)
 window.addEventListener('keydown', (event) => {
   keysPressed[event.code] = true; 
 });
@@ -187,7 +187,7 @@ function checkCollision(){
 };
 
 function movePaddles(){
-  // Modificato: Ora usa event.code per i tasti
+  // Modificato: Ora usa event.code per i tasti (soluzione al code smell)
   const paddle1Up = 'KeyW'; 
   const paddle1Down = 'KeyS'; 
   const paddle2Up = 'ArrowUp'; 
@@ -329,8 +329,9 @@ function drawParticle(particle) {
 }
 
 function updateParticles() {
-    bodyBgCtx.fillStyle = 'rgba(0, 0, 0, 0.05)'; 
-    bodyBgCtx.fillRect(0, 0, bodyBackgroundCanvas.width, bodyBackgroundCanvas.height);
+    // MODIFICA QUI: Pulisce completamente il canvas di sfondo ad ogni frame.
+    // Questo elimina l'effetto "striscia" delle particelle.
+    bodyBgCtx.clearRect(0, 0, bodyBackgroundCanvas.width, bodyBackgroundCanvas.height);
 
     for (let i = 0; i < numParticles; i++) {
         const particle = particles[i];
