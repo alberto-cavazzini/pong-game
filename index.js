@@ -2,37 +2,34 @@ const gameBoard = document.querySelector('#gameBoard');
 const ctx = gameBoard.getContext('2d');
 const scoreText = document.querySelector('#scoreText');
 const resetBtn = document.querySelector('#resetBtn');
-const gameWrapper = document.querySelector('#gameWrapper'); 
+const gameWrapper = document.querySelector('#gameWrapper');
 
-// Costanti per lo sfondo stellare (dentro gameContainer)
 const starBackgroundCanvas = document.querySelector('#starBackground');
 const starCtx = starBackgroundCanvas.getContext('2d');
 
-// Nuove costanti per l'animazione di sfondo del body
 const bodyBackgroundCanvas = document.querySelector('#bodyBackgroundCanvas');
 const bodyBgCtx = bodyBackgroundCanvas.getContext('2d');
 
 const gameWidth = gameBoard.width;
 const gameHeight = gameBoard.height;
 
-// Colori migliorati per il gioco
-const paddle1Color = '#00bcd4';   
-const paddle2Color = '#ff4081';   
-const paddleBorder = 'black';     
-const ballColor = '#ffffff';      
-const ballBorderColor = '#cccccc'; 
+const paddle1Color = '#00bcd4';
+const paddle2Color = '#ff4081';
+const paddleBorder = 'black';
+const ballColor = '#ffffff';
+const ballBorderColor = '#cccccc';
 
 const ballRadius = 12.5;
-const paddleSpeed = 5; 
+const paddleSpeed = 5;
 
 let intervalId;
-let ballSpeed; 
-let ballX = gameWidth / 2; 
-let ballY = gameHeight / 2; 
-let ballXDirection = 0; 
-let ballYDirection = 0; 
-let player1Score = 0; 
-let player2Score = 0; 
+let ballSpeed;
+let ballX = gameWidth / 2;
+let ballY = gameHeight / 2;
+let ballXDirection = 0;
+let ballYDirection = 0;
+let player1Score = 0;
+let player2Score = 0;
 let paddle1 = {
   width: 25,
   height: 100,
@@ -42,48 +39,45 @@ let paddle1 = {
 let paddle2 = {
   width: 25,
   height: 100,
-  x: gameWidth - 25, 
-  y: gameHeight - 100 
+  x: gameWidth - 25,
+  y: gameHeight - 100
 };
 
 let keysPressed = {};
 
-// Array per le stelle (dentro gameContainer)
 const stars = [];
-const numStars = 100; // Numero di stelle
-const starSpeed = 0.5; // Velocità delle stelle
+const numStars = 100;
+const starSpeed = 0.5;
 
-// Nuove costanti e array per le particelle di sfondo del body
 const particles = [];
-const numParticles = 50; // Aumentato il numero di particelle per maggiore visibilità
-const particleColor = 'rgba(100, 200, 255, 0.15)'; // Opacità leggermente aumentata
-const particleSpeed = 0.08; // Velocità leggermente aumentata
+const numParticles = 50;
+const particleColor = 'rgba(100, 200, 255, 0.15)';
+const particleSpeed = 0.08;
 
-// Modificato: Ora usa event.code per i tasti (soluzione al code smell)
 window.addEventListener('keydown', (event) => {
-  keysPressed[event.code] = true; 
+  keysPressed[event.code] = true;
 });
 window.addEventListener('keyup', (event) => {
-  keysPressed[event.code] = false; 
+  keysPressed[event.code] = false;
 });
 
 resetBtn.addEventListener('click', resetGame);
 
 window.addEventListener('resize', () => {
     scaleGameWrapper();
-    resizeStarBackground(); 
-    resizeBodyBackground(); 
+    resizeStarBackground();
+    resizeBodyBackground();
 });
 
 window.addEventListener('load', () => {
-    gameStart(); 
+    gameStart();
     scaleGameWrapper();
 
-    initStars(); 
-    animateStars(); 
+    initStars();
+    animateStars();
 
-    initParticles(); 
-    animateParticles(); 
+    initParticles();
+    animateParticles();
 });
 
 function gameStart(){
@@ -93,9 +87,9 @@ function gameStart(){
 
 function nextTick(){
   intervalId = setTimeout(()=>{
-    clearBoard(); 
+    clearBoard();
     drawPaddles();
-    movePaddles(); 
+    movePaddles();
     moveBall();
     drawBall(ballX, ballY);
     checkCollision();
@@ -104,7 +98,7 @@ function nextTick(){
 };
 
 function clearBoard(){
-  ctx.clearRect(0, 0, gameWidth, gameHeight); 
+  ctx.clearRect(0, 0, gameWidth, gameHeight);
 };
 
 function drawPaddles(){
@@ -113,14 +107,14 @@ function drawPaddles(){
   ctx.fillStyle = paddle1Color;
   ctx.fillRect(paddle1.x, paddle1.y, paddle1.width, paddle1.height);
   ctx.strokeRect(paddle1.x, paddle1.y, paddle1.width, paddle1.height);
-  
+
   ctx.fillStyle = paddle2Color;
   ctx.fillRect(paddle2.x, paddle2.y, paddle2.width, paddle2.height);
   ctx.strokeRect(paddle2.x, paddle2.y, paddle2.width, paddle2.height);
 };
 
 function CreateBall(){
-  ballSpeed = 2.5; 
+  ballSpeed = 2.5;
   if(Math.round(Math.random()) == 1){
     ballXDirection = 1;
   }
@@ -133,8 +127,8 @@ function CreateBall(){
   else{
     ballYDirection= Math.random()*-1;
   }
-  ballX = gameWidth / 2; 
-  ballY = gameHeight / 2; 
+  ballX = gameWidth / 2;
+  ballY = gameHeight / 2;
   drawBall(ballX, ballY);
 };
 
@@ -187,11 +181,10 @@ function checkCollision(){
 };
 
 function movePaddles(){
-  // Modificato: Ora usa event.code per i tasti (soluzione al code smell)
-  const paddle1Up = 'KeyW'; 
-  const paddle1Down = 'KeyS'; 
-  const paddle2Up = 'ArrowUp'; 
-  const paddle2Down = 'ArrowDown'; 
+  const paddle1Up = 'KeyW';
+  const paddle1Down = 'KeyS';
+  const paddle2Up = 'ArrowUp';
+  const paddle2Down = 'ArrowDown';
 
   if (keysPressed[paddle1Up] && paddle1.y > 0) {
     paddle1.y -= paddleSpeed;
@@ -216,41 +209,38 @@ function resetGame(){
   player1Score = 0;
   player2Score = 0;
   paddle1.y = 0;
-  paddle2.y = gameHeight - paddle2.height; 
-  ballSpeed = 2.5; 
-  ballX = gameWidth / 2; 
-  ballY = gameHeight / 2; 
-  ballXDirection = 0; 
-  ballYDirection = 0; 
-  keysPressed = {}; 
+  paddle2.y = gameHeight - paddle2.height;
+  ballSpeed = 2.5;
+  ballX = gameWidth / 2;
+  ballY = gameHeight / 2;
+  ballXDirection = 0;
+  ballYDirection = 0;
+  keysPressed = {};
   updateScore();
-  clearInterval(intervalId); 
-  gameStart(); 
+  clearInterval(intervalId);
+  gameStart();
 };
 
-// Funzione per scalare l'intero wrapper del gioco per adattarsi allo schermo
 function scaleGameWrapper() {
     const originalTransform = gameWrapper.style.transform;
-    gameWrapper.style.transform = 'none'; 
+    gameWrapper.style.transform = 'none';
 
     const idealGameWidth = gameWrapper.offsetWidth;
     const idealGameHeight = gameWrapper.offsetHeight;
-    
+
     gameWrapper.style.transform = originalTransform;
 
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    const margin = 40; 
+    const margin = 40;
     const scaleX = (viewportWidth - margin) / idealGameWidth;
     const scaleY = (viewportHeight - margin) / idealGameHeight;
 
-    const scaleFactor = Math.min(scaleX, scaleY); 
+    const scaleFactor = Math.min(scaleX, scaleY);
 
     gameWrapper.style.transform = `scale(${scaleFactor})`;
 }
-
-// --- Funzioni per l'animazione stellare (sfondo della BOARD) ---
 
 function resizeStarBackground() {
     starBackgroundCanvas.width = gameBoard.width;
@@ -258,14 +248,14 @@ function resizeStarBackground() {
 }
 
 function initStars() {
-    resizeStarBackground(); 
+    resizeStarBackground();
     for (let i = 0; i < numStars; i++) {
         stars.push({
             x: Math.random() * starBackgroundCanvas.width,
             y: Math.random() * starBackgroundCanvas.height,
-            radius: Math.random() * 1.5 + 0.5, 
-            alpha: Math.random(), 
-            velocity: Math.random() * 0.5 + 0.1 
+            radius: Math.random() * 1.5 + 0.5,
+            alpha: Math.random(),
+            velocity: Math.random() * 0.5 + 0.1
         });
     }
 }
@@ -278,16 +268,16 @@ function drawStar(star) {
 }
 
 function updateStars() {
-    starCtx.clearRect(0, 0, starBackgroundCanvas.width, starBackgroundCanvas.height); 
+    starCtx.clearRect(0, 0, starBackgroundCanvas.width, starBackgroundCanvas.height);
 
     for (let i = 0; i < numStars; i++) {
         const star = stars[i];
-        star.y += star.velocity * starSpeed; 
+        star.y += star.velocity * starSpeed;
         if (star.y > starBackgroundCanvas.height) {
             star.y = 0;
-            star.x = Math.random() * starBackgroundCanvas.width; 
+            star.x = Math.random() * starBackgroundCanvas.width;
         }
-        star.alpha += (Math.random() - 0.5) * 0.05; 
+        star.alpha += (Math.random() - 0.5) * 0.05;
         if (star.alpha > 1) star.alpha = 1;
         if (star.alpha < 0) star.alpha = 0;
         drawStar(star);
@@ -296,10 +286,8 @@ function updateStars() {
 
 function animateStars() {
     updateStars();
-    requestAnimationFrame(animateStars); 
+    requestAnimationFrame(animateStars);
 }
-
-// --- Nuove funzioni per l'animazione di sfondo del BODY ---
 
 function resizeBodyBackground() {
     bodyBackgroundCanvas.width = window.innerWidth;
@@ -307,16 +295,16 @@ function resizeBodyBackground() {
 }
 
 function initParticles() {
-    resizeBodyBackground(); 
+    resizeBodyBackground();
     for (let i = 0; i < numParticles; i++) {
         particles.push({
             x: Math.random() * bodyBackgroundCanvas.width,
             y: Math.random() * bodyBackgroundCanvas.height,
-            radius: Math.random() * 20 + 10, 
-            alpha: Math.random() * 0.5 + 0.1, 
-            vx: (Math.random() - 0.5) * particleSpeed * 10, 
-            vy: (Math.random() - 0.5) * particleSpeed * 10, 
-            life: Math.random() * 100 + 50 
+            radius: Math.random() * 20 + 10,
+            alpha: Math.random() * 0.5 + 0.1,
+            vx: (Math.random() - 0.5) * particleSpeed * 10,
+            vy: (Math.random() - 0.5) * particleSpeed * 10,
+            life: Math.random() * 100 + 50
         });
     }
 }
@@ -324,12 +312,11 @@ function initParticles() {
 function drawParticle(particle) {
     bodyBgCtx.beginPath();
     bodyBgCtx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-    bodyBgCtx.fillStyle = `rgba(100, 200, 255, ${particle.alpha * (particle.life / 150)})`; 
+    bodyBgCtx.fillStyle = `rgba(100, 200, 255, ${particle.alpha * (particle.life / 150)})`;
     bodyBgCtx.fill();
 }
 
 function updateParticles() {
-    // Pulisce completamente il canvas di sfondo ad ogni frame per eliminare l'effetto "striscia" delle particelle.
     bodyBgCtx.clearRect(0, 0, bodyBackgroundCanvas.width, bodyBackgroundCanvas.height);
 
     for (let i = 0; i < numParticles; i++) {
@@ -337,12 +324,12 @@ function updateParticles() {
 
         particle.x += particle.vx;
         particle.y += particle.vy;
-        particle.life -= 0.5; 
+        particle.life -= 0.5;
 
-        if (particle.life <= 0 || 
+        if (particle.life <= 0 ||
             particle.x < -particle.radius || particle.x > bodyBackgroundCanvas.width + particle.radius ||
             particle.y < -particle.radius || particle.y > bodyBackgroundCanvas.height + particle.radius) {
-            
+
             particles[i] = {
                 x: Math.random() * bodyBackgroundCanvas.width,
                 y: Math.random() * bodyBackgroundCanvas.height,
@@ -360,5 +347,5 @@ function updateParticles() {
 
 function animateParticles() {
     updateParticles();
-    requestAnimationFrame(animateParticles); 
+    requestAnimationFrame(animateParticles);
 }
