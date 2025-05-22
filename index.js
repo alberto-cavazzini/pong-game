@@ -55,34 +55,35 @@ const starSpeed = 0.5; // Velocità delle stelle
 
 // Nuove costanti e array per le particelle di sfondo del body
 const particles = [];
-const numParticles = 30; // Numero di particelle fluide
-const particleColor = 'rgba(100, 200, 255, 0.1)'; // Blu chiaro semi-trasparente
-const particleSpeed = 0.05; // Velocità lenta delle particelle
+const numParticles = 50; // Aumentato il numero di particelle per maggiore visibilità
+const particleColor = 'rgba(100, 200, 255, 0.15)'; // Opacità leggermente aumentata
+const particleSpeed = 0.08; // Velocità leggermente aumentata
 
+// Modificato: Ora usa event.code per i tasti
 window.addEventListener('keydown', (event) => {
-  keysPressed[event.keyCode] = true;
+  keysPressed[event.code] = true; 
 });
 window.addEventListener('keyup', (event) => {
-  keysPressed[event.keyCode] = false;
+  keysPressed[event.code] = false; 
 });
 
 resetBtn.addEventListener('click', resetGame);
 
 window.addEventListener('resize', () => {
     scaleGameWrapper();
-    resizeStarBackground(); // Ridimensiona anche lo sfondo stellare del gameBoard
-    resizeBodyBackground(); // Ridimensiona lo sfondo del body
+    resizeStarBackground(); 
+    resizeBodyBackground(); 
 });
 
 window.addEventListener('load', () => {
     gameStart(); 
     scaleGameWrapper();
 
-    initStars(); // Inizializza le stelle del gameBoard
-    animateStars(); // Avvia l'animazione delle stelle
+    initStars(); 
+    animateStars(); 
 
-    initParticles(); // Inizializza le particelle del body
-    animateParticles(); // Avvia l'animazione delle particelle del body
+    initParticles(); 
+    animateParticles(); 
 });
 
 function gameStart(){
@@ -147,7 +148,7 @@ function drawBall(ballX, ballY){
   ctx.strokeStyle = ballBorderColor;
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.arc(ballX, ballY, ballRadius, 0, 2 * Math.PI);
+  ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
   ctx.stroke();
   ctx.fill();
 };
@@ -182,15 +183,15 @@ function checkCollision(){
       ballX = paddle2.x - ballRadius;
       ballXDirection *= -1;
     }
-    // No acceleration here
   }
 };
 
 function movePaddles(){
-  const paddle1Up = 87; 
-  const paddle1Down = 83; 
-  const paddle2Up = 38; 
-  const paddle2Down = 40; 
+  // Modificato: Ora usa event.code per i tasti
+  const paddle1Up = 'KeyW'; 
+  const paddle1Down = 'KeyS'; 
+  const paddle2Up = 'ArrowUp'; 
+  const paddle2Down = 'ArrowDown'; 
 
   if (keysPressed[paddle1Up] && paddle1.y > 0) {
     paddle1.y -= paddleSpeed;
@@ -240,13 +241,12 @@ function scaleGameWrapper() {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    const scaleX = viewportWidth / idealGameWidth;
-    const scaleY = viewportHeight / idealGameHeight;
+    const margin = 40; 
+    const scaleX = (viewportWidth - margin) / idealGameWidth;
+    const scaleY = (viewportHeight - margin) / idealGameHeight;
 
-    const scaleFactor = Math.min(scaleX, scaleY) * 0.95; 
+    const scaleFactor = Math.min(scaleX, scaleY); 
 
-    // Rimuoviamo il translate qui, perché il centramento è ora gestito dal flexbox del body
-    // e il gameWrapper è `position: relative`
     gameWrapper.style.transform = `scale(${scaleFactor})`;
 }
 
@@ -258,7 +258,7 @@ function resizeStarBackground() {
 }
 
 function initStars() {
-    resizeStarBackground();
+    resizeStarBackground(); 
     for (let i = 0; i < numStars; i++) {
         stars.push({
             x: Math.random() * starBackgroundCanvas.width,
@@ -279,9 +279,6 @@ function drawStar(star) {
 
 function updateStars() {
     starCtx.clearRect(0, 0, starBackgroundCanvas.width, starBackgroundCanvas.height); 
-    // Puoi anche riempire con un colore di sfondo se desideri un colore scuro specifico per le stelle
-    // starCtx.fillStyle = '#1a0f33'; 
-    // starCtx.fillRect(0, 0, starBackgroundCanvas.width, starBackgroundCanvas.height);
 
     for (let i = 0; i < numStars; i++) {
         const star = stars[i];
@@ -304,41 +301,35 @@ function animateStars() {
 
 // --- Nuove funzioni per l'animazione di sfondo del BODY ---
 
-// Ridimensiona la canvas di sfondo del body per coprire l'intera viewport
 function resizeBodyBackground() {
     bodyBackgroundCanvas.width = window.innerWidth;
     bodyBackgroundCanvas.height = window.innerHeight;
 }
 
-// Inizializza le particelle
 function initParticles() {
-    resizeBodyBackground(); // Assicurati che le dimensioni siano corrette all'inizio
+    resizeBodyBackground(); 
     for (let i = 0; i < numParticles; i++) {
         particles.push({
             x: Math.random() * bodyBackgroundCanvas.width,
             y: Math.random() * bodyBackgroundCanvas.height,
-            radius: Math.random() * 20 + 10, // Particelle più grandi
-            alpha: Math.random() * 0.5 + 0.1, // Opacità bassa per effetto nebbioso
-            vx: (Math.random() - 0.5) * particleSpeed * 10, // Velocità orizzontale
-            vy: (Math.random() - 0.5) * particleSpeed * 10, // Velocità verticale
-            life: Math.random() * 100 + 50 // Vita delle particelle per svanire
+            radius: Math.random() * 20 + 10, 
+            alpha: Math.random() * 0.5 + 0.1, 
+            vx: (Math.random() - 0.5) * particleSpeed * 10, 
+            vy: (Math.random() - 0.5) * particleSpeed * 10, 
+            life: Math.random() * 100 + 50 
         });
     }
 }
 
-// Disegna una singola particella
 function drawParticle(particle) {
     bodyBgCtx.beginPath();
     bodyBgCtx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-    bodyBgCtx.fillStyle = `rgba(100, 200, 255, ${particle.alpha * (particle.life / 150)})`; // Opacità che diminuisce con la vita
+    bodyBgCtx.fillStyle = `rgba(100, 200, 255, ${particle.alpha * (particle.life / 150)})`; 
     bodyBgCtx.fill();
 }
 
-// Aggiorna la posizione e la vita delle particelle
 function updateParticles() {
-    // Rimuovi l'effetto "strisciata" creando uno sfondo semi-trasparente ad ogni frame
-    // Questo crea l'effetto "scia" desiderato per le particelle senza pulire completamente
-    bodyBgCtx.fillStyle = 'rgba(0, 0, 0, 0.05)'; // Colore quasi nero, molto trasparente
+    bodyBgCtx.fillStyle = 'rgba(0, 0, 0, 0.05)'; 
     bodyBgCtx.fillRect(0, 0, bodyBackgroundCanvas.width, bodyBackgroundCanvas.height);
 
     for (let i = 0; i < numParticles; i++) {
@@ -346,9 +337,8 @@ function updateParticles() {
 
         particle.x += particle.vx;
         particle.y += particle.vy;
-        particle.life -= 0.5; // Diminuisce la vita
+        particle.life -= 0.5; 
 
-        // Se la particella "muore" o esce dallo schermo, resettala
         if (particle.life <= 0 || 
             particle.x < -particle.radius || particle.x > bodyBackgroundCanvas.width + particle.radius ||
             particle.y < -particle.radius || particle.y > bodyBackgroundCanvas.height + particle.radius) {
@@ -368,7 +358,6 @@ function updateParticles() {
     }
 }
 
-// Loop di animazione delle particelle
 function animateParticles() {
     updateParticles();
     requestAnimationFrame(animateParticles); 
